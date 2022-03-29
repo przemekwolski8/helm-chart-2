@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: questbook-ui
+spec:
+  replicas: 2
+  revisionHistoryLimit: 11
+  selector:
+    matchLabels:
+      app: questbook-ui
+  template:
+    metadata:
+      labels:
+        app: questbook-ui
+    spec:
+      containers:
+      - image: gcr.io/heptio-images/ks-guestbook-demo:0.2
+        imagePullPolicy: IfNotPresent
+        name: questbook-ui
+        ports: 
+          - name: http
+            containerPort: 80
+            protocol: TCP
+        readinessProbe:
+          httpGet:
+            port: http
+            path: /
+        livenessProbe:
+          httpGet:
+            port: http
+            path: /
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
